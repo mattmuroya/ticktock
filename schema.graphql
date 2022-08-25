@@ -1,0 +1,33 @@
+type User {
+  name: String!
+  email: String!
+  password: String!
+  posts: [Post]
+}
+
+type Post {
+  title: String!
+  tags: [String]
+  author: User!
+}
+
+type Query {
+  findUserByEmail(email: String): User
+  # listPosts returns an array of Posts
+  # in graphQL, @resolver resolves to some function
+  #   in Fauna, this resolves to Fauna query language
+  # listPosts: [Post] @resolver(name: "ListPosts", paginated: true)
+}
+
+type Mutation {
+  registerUser(name: String!, email: String!, password: String!): User
+    @resolver(name: "RegisterUser")
+  login(email: String!, password: String!): Token @resolver(name: "LoginUser")
+}
+
+type Token @embedded {
+  ttl: Time!
+  secret: String!
+  email: String!
+  userId: ID!
+}
